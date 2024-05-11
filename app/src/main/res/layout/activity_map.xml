@@ -34,6 +34,8 @@
             android:gravity="left|center_vertical"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:lines="1"
+            android:singleLine="true"
             android:hint="请选择目的地"
             android:textColorHint="#999999"
             android:layout_height="match_parent"/>
