@@ -2,9 +2,12 @@ package com.scc.navigation.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.scc.navigation.data.SearchAddress
 
 class SearchViewModel :ViewModel() {
 
-//    private val  MutableLiveData<> items =
+    val  items = MutableLiveData<SearchAddress>();
+
+
 
 }

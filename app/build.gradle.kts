@@ -19,6 +19,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        dataBinding.enable =true
     }
 
     buildTypes {
