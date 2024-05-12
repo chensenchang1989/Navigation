@@ -1,4 +1,4 @@
-package com.scc.navigation
+package com.scc.navigation.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

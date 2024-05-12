@@ -30,7 +30,7 @@
         android:ellipsize="end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_icon"
-        android:textColor="#3333333"/>
+        android:textColor="#333333"/>
 
 
     <View

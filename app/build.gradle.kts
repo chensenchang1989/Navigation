@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.scc.navigation"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -74,4 +74,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    //SmartLocation
+    implementation (libs.library)
+    //地图工具
+    implementation (libs.maps.utils.ktx)
+    //mmkv
+    implementation(libs.mmkv)
+    //gson
+    implementation (libs.converter.gson)
+
 }
