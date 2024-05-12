@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">NavigationExam</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="api_key">AIzaSyDZJgHWU5COTxakN52Oyv5Oq8sZicFa-2Q</string>
 </resources>

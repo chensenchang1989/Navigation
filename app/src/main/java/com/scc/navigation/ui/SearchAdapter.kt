@@ -26,6 +26,7 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.ItemViewHolder>() {
         fun bind(address : SearchAddress){
             with(binding){
                 tvLocation.text = address.address
+                tvName.text =address.name
 
                 root.setOnClickListener {
                     onItemClickListener?.invoke(address.address.orEmpty())

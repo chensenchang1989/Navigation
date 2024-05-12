@@ -7,4 +7,6 @@ object Constants {
     const val REQUEST_DESTINATION_CODE = 121
     //key 检索
     const val KEY_SEARCH_ADDRESS ="search_address"
+    //当前位置坐标
+    const val KEY_CURRENT_POSITION ="current_position"
 }
