@@ -12,6 +12,6 @@ object Constants {
     //当前选择的位置
     const val KEY_CLICK_ADDRESS ="click_address"
 
-    const val BASE_URL ="https://maps.googleapis.com/maps/api/"
+    const val BASE_URL ="https://routes.googleapis.com/directions/v2"
 
 }
