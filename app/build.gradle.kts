@@ -73,7 +73,6 @@ dependencies {
     implementation(libs.volley)
     implementation(libs.play.services.location)
     implementation(libs.play.services.base)
-    implementation(libs.navigation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
