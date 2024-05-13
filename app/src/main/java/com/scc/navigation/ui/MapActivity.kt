@@ -5,39 +5,42 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
+import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.PolylineOptions
 import com.scc.navigation.R
 import com.scc.navigation.base.BaseActivity
 import com.scc.navigation.data.SearchAddress
 import com.scc.navigation.databinding.ActivityMapBinding
-import com.scc.navigation.utils.Constants.KEY_SEARCH_ADDRESS
+import com.scc.navigation.utils.Constants.KEY_CLICK_ADDRESS
 import com.scc.navigation.utils.Constants.REQUEST_DESTINATION_CODE
-import com.scc.navigation.utils.MMKVUtils
 import com.scc.navigation.utils.addMarkerExt
-import com.scc.navigation.utils.asColor
 import com.scc.navigation.utils.changeCameraPosition
-import com.scc.navigation.utils.drawPolyline
 import com.scc.navigation.utils.isEmpty
 import com.scc.navigation.utils.requestLocationPermissions
 import com.scc.navigation.utils.zoomArea
 import com.scc.navigation.viewmodel.MapViewModel
 import io.nlopez.smartlocation.SmartLocation
 
+
 class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBinding::inflate),
     OnMapReadyCallback {
 
-
     override val viewModel: MapViewModel by viewModels()
-
     private var mapFragment: SupportMapFragment? = null
     private var mMap: GoogleMap? = null //地图
     private var mCurrentLocation: LatLng? = null//当前位置坐标
-    private var mDestination:SearchAddress?=null;//选择的目的地
+    private var mDestination: SearchAddress? = null;//选择的目的地
+    private var mStartLat: LatLng? = null//开始坐标
+    private var mEndLat: LatLng? = null//目的地
 
     override fun onCreateFinished() {
         super.onCreateFinished()
@@ -50,7 +53,7 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
     }
 
     /**
-     * 地圖初始化
+     * 地图初始化
      */
     private fun initMap() {
         mapFragment =
@@ -61,8 +64,12 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
     override fun initListeners() {
         super.initListeners()
         binding.flDestination.setOnClickListener {
-            val data: Intent = Intent(this@MapActivity, SearchActivity::class.java)
+            val data = Intent(this@MapActivity, SearchActivity::class.java)
             startActivityForResult(data, REQUEST_DESTINATION_CODE)
+        }
+        //开始导航
+        binding.btnNavigation.setOnClickListener {
+            startNavigation()
         }
     }
 
@@ -74,19 +81,6 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
                 startLocationUpdates()
             }
         }
-    }
-
-    override fun observeEvents() {
-        super.observeEvents()
-    }
-
-    /**
-     * 绘制轨迹
-     */
-    private fun drawPolyline(shape: String) {
-        mMap?.drawPolyline(
-            shape = shape, colorId = R.color.red.asColor(this@MapActivity)
-        )
     }
 
     @SuppressLint("MissingPermission")
@@ -108,6 +102,9 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
      */
     private fun startLocationUpdates() {
         SmartLocation.with(this@MapActivity).location().start { location ->
+            if (mStartLat == null && location != null) {
+                mStartLat = LatLng(location.latitude, location.longitude)
+            }
             updateMapLocation(location)
             mCurrentLocation = LatLng(location.latitude, location.longitude)
         }
@@ -120,37 +117,62 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
         mMap?.changeCameraPosition(LatLng(location.latitude, location.longitude))
     }
 
+    override fun onResume() {
+        super.onResume()
+        //已走路程
+        mStartLat?.let {
+            mCurrentLocation?.let { current ->
+                drawRoute(current)
+            }
+        }
+    }
+
     /**
-     * 绘制当前路线
+     * 绘制当前轨迹路线
      */
-    private fun drawRoute(selectedAddress: LatLng?) {
-        uploadRoute(selectedAddress)
+    private fun drawRoute(current: LatLng?) {
+        if (mCurrentLocation == null || current == null) return
         mMap?.apply {
             clear()
             zoomArea(
-                listOf(mCurrentLocation.isEmpty(), selectedAddress.isEmpty())
+                listOf(mStartLat.isEmpty(), current.isEmpty())
             )
-            addMarkerExt(selectedAddress.isEmpty())
+            addMarkerExt(current.isEmpty())
         }
     }
 
 
-    private fun uploadRoute(selectedAddress: LatLng?) {
-        if (mCurrentLocation == null || selectedAddress == null) return
-    }
 
-    override fun onResume() {
-        super.onResume()
-        mCurrentLocation?.let {
-            drawRoute(it)
-        }
-    }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         //获取到回传的目的地信息
         if (data != null && requestCode == REQUEST_DESTINATION_CODE) {
-            mDestination = data.getSerializableExtra(KEY_SEARCH_ADDRESS) as SearchAddress;
+            mDestination = data.getSerializableExtra(KEY_CLICK_ADDRESS) as SearchAddress;
+            mEndLat = mDestination!!.latLng;
         }
+    }
+
+    private fun startNavigation() {
+        binding.btnNavigation.text = "停止"
+        binding.clInfoLayout.visibility = View.GONE
+
+        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(mStartLat!!, 15.0f))
+
+        //TODO
+    }
+
+    /**
+     * 绘制整条路线
+     */
+    private fun drawRoute(points:List<LatLng>) {
+        mMap?.addPolyline(
+            PolylineOptions()
+                .addAll(points)
+                .width(10f)
+                .color(R.color.purple_500)
+                .geodesic(true)
+        )
     }
 }

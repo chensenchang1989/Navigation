@@ -29,7 +29,6 @@ abstract class BaseActivity<T : ViewBinding, out VM : BaseViewModel>(
         collectLast(viewModel.loading, ::handleLoading)
         onCreateFinished()
         initListeners()
-        observeEvents()
     }
 
     private fun handleLoading(isLoading: Boolean) {

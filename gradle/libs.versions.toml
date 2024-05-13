@@ -13,16 +13,18 @@ composeBom = "2023.08.00"
 googleAndroidLibrariesMapsplatformSecretsGradlePlugin = "2.0.1"
 mapsUtilsKtx = "3.1.0"
 mmkv = "1.3.5"
+okhttp = "3.14.9"
 playServicesMaps = "18.1.0"
 appcompat = "1.6.1"
 constraintlayout = "2.1.4"
 recyclerview = "1.3.2"
 playServicesPlaces = "17.0.0"
 places = "3.4.0"
+retrofit = "2.9.0"
 volley = "1.2.1"
 playServicesLocation = "21.2.0"
 playServicesBase = "18.4.0"
-appcompatV7 = "28.0.0"
+navigation = "5.3.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,16 +45,18 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 library = { module = "io.nlopez.smartlocation:library", version.ref = "library" }
 maps-utils-ktx = { module = "com.google.maps.android:maps-utils-ktx", version.ref = "mapsUtilsKtx" }
 mmkv = { module = "com.tencent:mmkv", version.ref = "mmkv" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 play-services-places = { group = "com.google.android.gms", name = "play-services-places", version.ref = "playServicesPlaces" }
 places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
+retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 play-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "playServicesBase" }
-appcompat-v7 = { group = "com.android.support", name = "appcompat-v7", version.ref = "appcompatV7" }
+navigation = { group = "com.google.android.libraries.navigation", name = "navigation", version.ref = "navigation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -20,7 +20,7 @@ android {
             useSupportLibrary = true
         }
 
-        dataBinding.enable =true
+        dataBinding.enable = true
     }
 
     buildTypes {
@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.volley)
     implementation(libs.play.services.location)
     implementation(libs.play.services.base)
+    implementation(libs.navigation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -82,12 +83,15 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     //SmartLocation
-    implementation (libs.library)
+    implementation(libs.library)
     //地图工具
-    implementation (libs.maps.utils.ktx)
+    implementation(libs.maps.utils.ktx)
     //mmkv
     implementation(libs.mmkv)
     //gson
-    implementation (libs.converter.gson)
+    implementation(libs.converter.gson)
+    // retrofit2
+    implementation (libs.retrofit2.retrofit)
 
+    implementation(libs.okhttp)
 }
