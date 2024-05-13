@@ -9,6 +9,4 @@ class SearchViewModel : BaseViewModel() {
 
     val  items = MutableLiveData<SearchAddress>();
 
-
-
 }

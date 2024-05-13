@@ -5,9 +5,9 @@ import com.google.android.gms.maps.model.LatLng
 import java.io.Serializable
 
 data class SearchAddress(
-    val address: String? = "",
-    val name: String? = "",
-    val placeId: String? = "",
-    val latLng: LatLng?=null
+    var name: String? = "",
+    var address: String? = "",
+    var placeId: String? = "",
+    var latLng: LatLng?=null
 ) : Serializable
 

@@ -9,9 +9,9 @@ import com.scc.navigation.databinding.ItemSearchDestinationBinding
 
 class SearchAdapter : RecyclerView.Adapter<SearchAdapter.ItemViewHolder>() {
 
-    private var onItemClickListener : ((String) -> Unit)? = null
+    private var onItemClickListener : ((SearchAddress) -> Unit)? = null
 
-    fun setOnItemClickListener(listener : (String) -> Unit){
+    fun setOnItemClickListener(listener : (SearchAddress) -> Unit){
         onItemClickListener = listener
     }
 
@@ -29,7 +29,7 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.ItemViewHolder>() {
                 tvName.text =address.name
 
                 root.setOnClickListener {
-                    onItemClickListener?.invoke(address.address.orEmpty())
+                    onItemClickListener?.invoke(address)
                 }
             }
         }

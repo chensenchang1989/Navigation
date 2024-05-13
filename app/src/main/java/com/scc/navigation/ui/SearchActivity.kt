@@ -1,6 +1,8 @@
 package com.scc.navigation.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.location.Location
 import android.util.Log
 import android.widget.Toast
@@ -17,10 +19,14 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.LocationBias
+import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.model.PlaceTypes
 import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
+import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.api.net.SearchByTextRequest
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.maps.android.SphericalUtil
@@ -28,8 +34,12 @@ import com.scc.navigation.R
 import com.scc.navigation.base.BaseActivity
 import com.scc.navigation.data.SearchAddress
 import com.scc.navigation.databinding.ActivitySearchBinding
+import com.scc.navigation.utils.Constants
 import com.scc.navigation.utils.Constants.KEY_CURRENT_POSITION
+import com.scc.navigation.utils.Utils
 import com.scc.navigation.viewmodel.SearchViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONException
 
@@ -43,8 +53,6 @@ class SearchActivity :
     lateinit var searchAdapter: SearchAdapter
 
     override val viewModel: SearchViewModel by viewModels()
-
-    lateinit var deviceLocation: LatLng
 
     private lateinit var placesClient: PlacesClient
 
@@ -67,48 +75,42 @@ class SearchActivity :
             }
         })
         placesClient = Places.createClient(this)
-       // deviceLocation = intent?.getParcelableExtra<LatLng>(KEY_CURRENT_POSITION)!!
         initRecyclerView()
+
+        //稍微延迟一下弹出键盘
+        runBlocking {
+            delay(1000)
+            Utils.showSoftBoard(this@SearchActivity, binding.etSearch)
+        }
     }
-    //
 
     private fun initRecyclerView() {
-        with(binding) {
-            searchAdapter = SearchAdapter()
-            binding.rvSearch.adapter = searchAdapter;
+        searchAdapter = SearchAdapter()
+        binding.rvSearch.adapter = searchAdapter;
+        searchAdapter.setOnItemClickListener {
+            val data = Intent();
+            data.putExtra(Constants.KEY_CLICK_ADDRESS, it);
+            setResult(Activity.RESULT_OK, data)
+            finish()
         }
     }
 
     @SuppressLint("MissingPermission")
     private fun search(key: String) {
-        val bias: LocationBias = RectangularBounds.newInstance(
-            LatLng(22.458744, 88.208162),  // SW lat, lng
-            LatLng(22.730671, 88.524896) // NE lat, lng
-        )
+        // 使用字段定义要返回的数据类型.
+        val placeFields =
+            listOf(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ID, Place.Field.LAT_LNG)
+        val textRequest = SearchByTextRequest.builder(key, placeFields).build();
 
-        // Create a new programmatic Place Autocomplete request in Places SDK for Android
-        val newRequest = FindAutocompletePredictionsRequest.builder()
-            .setLocationBias(bias)
-            .setCountries("IN")
-            .setTypesFilter(listOf(PlaceTypes.ESTABLISHMENT))
-            .setQuery(key)
-            .build()
-
-        // Perform autocomplete predictions request
-        placesClient.findAutocompletePredictions(newRequest)
-            .addOnSuccessListener { response ->
-                val predictions = response.autocompletePredictions
-                predictions.forEach {
-                    val name = it.getPrimaryText(null)
-                    val addr = it.getSecondaryText(null)
-                    val placeId = it.placeId
-                    items.add(SearchAddress(addr.toString(), name.toString(), placeId, null))
+        placesClient.searchByText(textRequest)
+            .addOnSuccessListener {
+                it.places.forEach { it ->
+                    items.add(SearchAddress(it.name, it.address, it.id, it.latLng))
                 }
-                searchAdapter.setAddress(items)
-            }.addOnFailureListener { exception: Exception? ->
-                if (exception is ApiException) {
-                    Log.e(TAG, "Place not found: ${exception.message}")
-                }
+                searchAdapter.setAddress(items);
+            }
+            .addOnFailureListener {
+                searchAdapter.setAddress(emptyList())
             }
     }
 

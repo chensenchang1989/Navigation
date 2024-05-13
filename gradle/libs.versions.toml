@@ -21,6 +21,8 @@ playServicesPlaces = "17.0.0"
 places = "3.4.0"
 volley = "1.2.1"
 playServicesLocation = "21.2.0"
+playServicesBase = "18.4.0"
+appcompatV7 = "28.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +51,8 @@ play-services-places = { group = "com.google.android.gms", name = "play-services
 places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
 volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+play-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "playServicesBase" }
+appcompat-v7 = { group = "com.android.support", name = "appcompat-v7", version.ref = "appcompatV7" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

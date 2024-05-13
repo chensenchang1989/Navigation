@@ -37,10 +37,10 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
     private var mapFragment: SupportMapFragment? = null
     private var mMap: GoogleMap? = null //地图
     private var mCurrentLocation: LatLng? = null//当前位置坐标
+    private var mDestination:SearchAddress?=null;//选择的目的地
 
     override fun onCreateFinished() {
         super.onCreateFinished()
-        MMKVUtils.clear()
         initMap()
         requestLocationPermissions {
             if (it) {
@@ -68,11 +68,7 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        isLocationPermissions()
-        setupMap()
-    }
-
-    private fun setupMap() {
+        setLocationPermissions()
         mMap?.setOnMapLoadedCallback {
             requestLocationPermissions {
                 startLocationUpdates()
@@ -118,7 +114,7 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
     }
 
     /**
-     * 更新位置
+     * 更新当前位置
      */
     private fun updateMapLocation(location: Location) {
         mMap?.changeCameraPosition(LatLng(location.latitude, location.longitude))
@@ -154,7 +150,7 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
         super.onActivityResult(requestCode, resultCode, data)
         //获取到回传的目的地信息
         if (data != null && requestCode == REQUEST_DESTINATION_CODE) {
-            val address = data.getSerializableExtra(KEY_SEARCH_ADDRESS) as SearchAddress;
+            mDestination = data.getSerializableExtra(KEY_SEARCH_ADDRESS) as SearchAddress;
         }
     }
 }
