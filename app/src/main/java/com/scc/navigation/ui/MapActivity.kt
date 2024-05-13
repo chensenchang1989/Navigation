@@ -10,6 +10,7 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -22,6 +23,7 @@ import com.scc.navigation.data.SearchAddress
 import com.scc.navigation.databinding.ActivityMapBinding
 import com.scc.navigation.utils.Constants.KEY_CLICK_ADDRESS
 import com.scc.navigation.utils.Constants.REQUEST_DESTINATION_CODE
+import com.scc.navigation.utils.Utils
 import com.scc.navigation.utils.addMarkerExt
 import com.scc.navigation.utils.changeCameraPosition
 import com.scc.navigation.utils.isEmpty
@@ -71,6 +73,11 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
         binding.btnNavigation.setOnClickListener {
             startNavigation()
         }
+
+        viewModel.route.observe(this@MapActivity, Observer {
+            //绘制全程路线
+
+        })
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -81,6 +88,7 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
                 startLocationUpdates()
             }
         }
+        updateFinishRoute()
     }
 
     @SuppressLint("MissingPermission")
@@ -117,8 +125,7 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
         mMap?.changeCameraPosition(LatLng(location.latitude, location.longitude))
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun updateFinishRoute() {
         //已走路程
         mStartLat?.let {
             mCurrentLocation?.let { current ->
@@ -131,7 +138,7 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
      * 绘制当前轨迹路线
      */
     private fun drawRoute(current: LatLng?) {
-        if (mCurrentLocation == null || current == null) return
+        if (current == null) return
         mMap?.apply {
             clear()
             zoomArea(
@@ -140,8 +147,6 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
             addMarkerExt(current.isEmpty())
         }
     }
-
-
 
 
     @Deprecated("Deprecated in Java")
@@ -155,18 +160,34 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(ActivityMapBi
     }
 
     private fun startNavigation() {
-        binding.btnNavigation.text = "停止"
-        binding.clInfoLayout.visibility = View.GONE
+        if (binding.btnNavigation.text.equals("导航")) {
+            binding.btnNavigation.text = "停止"
+            binding.clInfoLayout.visibility = View.GONE
 
+            //TODO 请求获取路线接口
+//            viewModel.queryRouteInfo()
+
+        } else {
+            binding.btnNavigation.text = "导航"
+            binding.clInfoLayout.visibility = View.VISIBLE
+
+        }
         mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(mStartLat!!, 15.0f))
+    }
 
-        //TODO
+    /**
+     * 图片上传
+     */
+    private fun uploadImage(){
+        //获取截图
+        val bitmap = Utils.getFragmentScreenshot(mapFragment!!);
+        //上传图片
     }
 
     /**
      * 绘制整条路线
      */
-    private fun drawRoute(points:List<LatLng>) {
+    private fun drawRoute(points: List<LatLng>) {
         mMap?.addPolyline(
             PolylineOptions()
                 .addAll(points)

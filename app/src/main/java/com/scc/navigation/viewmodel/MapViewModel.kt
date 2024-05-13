@@ -25,7 +25,7 @@ import retrofit2.http.Query
 
 class MapViewModel : BaseViewModel() {
 
-    val route = MutableLiveData<List<Point>?>()
+    val route = MutableLiveData<RouteInfo>()
 
     fun queryRouteInfo(start: String, des: String) {
 
@@ -46,13 +46,12 @@ class MapViewModel : BaseViewModel() {
 
                     override fun onResponse(call: Call<RouteInfo>, response: Response<RouteInfo>) {
                         hideLoading()
-                        val points = response.body()?.points;
-                        route.value = points;
+                        route.value = response.body();
                     }
 
                     override fun onFailure(call: Call<RouteInfo>, t: Throwable) {
                         hideLoading()
-                        route.value = emptyList()
+                        route.value =RouteInfo()
                     }
                 })
         }

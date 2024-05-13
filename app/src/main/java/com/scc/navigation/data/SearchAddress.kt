@@ -12,5 +12,6 @@ data class SearchAddress(
     var latLng: LatLng?=null
 ) : Serializable
 
-data class RouteInfo(var points:List<Point> ?=null);
+data class Polyline(val encodedPolyline:String?="")
+data class RouteInfo(val distanceMeters:Int?= 0,val duration:String?="",val polyline:Polyline?=null);
 
